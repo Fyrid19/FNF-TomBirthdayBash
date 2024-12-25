@@ -26,7 +26,7 @@ class TomStoryState extends MusicBeatState {
     var textBackdrop:FlxBackdrop;
     var textBackdrop2:FlxBackdrop;
 
-    var weekGrp:FlxTypedGroup<FlxSprite>;
+    var weekGrp:FlxTypedGroup<WeekItem>;
     var weekPaths:Array<String> = [
         'tom',
         'tom2',
@@ -51,6 +51,8 @@ class TomStoryState extends MusicBeatState {
     var weekTracksText:FlxText;
 
     var selectingWeek:Bool = false;
+
+    public static var readingNote:Bool = false;
 
     public static var curWeekName:String = '';
 
@@ -136,13 +138,14 @@ class TomStoryState extends MusicBeatState {
         leftArrow.x = 10;
 		add(leftArrow);
 
-        weekGrp = new FlxTypedGroup<FlxSprite>();
+        weekGrp = new FlxTypedGroup<WeekItem>();
         add(weekGrp);
         
         FlxG.mouse.visible = true;
 
         for (i in 0...weekPaths.length) {
-            var weekItem:FlxSprite = new FlxSprite().loadGraphic(Paths.image('storymenu/' + weekPaths[i]));
+            var weekItem:WeekItem = new WeekItem();
+            weekItem.loadGraphic(Paths.image('storymenu/' + weekPaths[i]));
             weekItem.x = FlxG.width * (0.25 * (i+1)) - weekItem.width/2;
 
             if (i == 1)
@@ -165,11 +168,15 @@ class TomStoryState extends MusicBeatState {
         selector.y = weekGrp.members[curSelected].y - 90;
 
         super.create();
+
+        if (FlxG.save.data.playedBestFriend) {
+            openSubState(new NoteForTom());
+            readingNote = true;
+        }
     }
 
-    var canSelect:Bool = true;
     override function update(elapsed:Float) {
-        if (!selectingWeek) {
+        if (!selectingWeek && !readingNote) {
             if (controls.BACK) {
                 FlxG.sound.play(Paths.sound('cancelMenu'));
                 FlxG.switchState(() -> new MainMenuState());
@@ -220,17 +227,17 @@ class TomStoryState extends MusicBeatState {
         selector.x = FlxMath.lerp(selector.x, curWeek.x - 80, lerpThing2);
         selector.y = FlxMath.lerp(selector.y, curWeek.y - 90, lerpThing2);
 
-        if (!selectingWeek) {
+        if (!selectingWeek && !readingNote) {
             for (item in weekGrp.members) {
-                if (FlxG.mouse.overlaps(item) && canSelect) {
+                if (FlxG.mouse.overlaps(item) && !item.isSelected) {
                     changeSelection(item.ID, true);
-                    canSelect = false;
+                    item.isSelected = true;
                     if (!usingMouse) usingMouse = true;
                 }
-            }
 
-            if (!FlxG.mouse.overlaps(weekGrp)) {
-                canSelect = true;
+                if (!FlxG.mouse.overlaps(item)) {
+                    item.isSelected = false;
+                }
             }
 
             if (FlxG.mouse.overlaps(weekGrp) && FlxG.mouse.justPressed) {
@@ -337,5 +344,13 @@ class TomStoryState extends MusicBeatState {
             FreeplayState.destroyFreeplayVocals();
             FlxG.mouse.visible = false;
         });
+    }
+}
+
+class WeekItem extends FlxSprite {
+    public var isSelected:Bool;
+
+    public function new() {
+        super();
     }
 }
