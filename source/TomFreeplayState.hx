@@ -10,7 +10,6 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.addons.display.FlxBackdrop;
-import Discord.DiscordClient;
 
 class TomFreeplayState extends MusicBeatState
 {
@@ -38,9 +37,11 @@ class TomFreeplayState extends MusicBeatState
 
 		selecting = false;
 
+		FlxG.mouse.visible = false;
+
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Freeplay Select Menu", null);
+		DiscordRPC.changePresence({details: "Freeplay Select Menu"});
 		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -173,6 +174,8 @@ class TomFreeplayState extends MusicBeatState
 		FlxG.sound.play(Paths.sound('confirmMenu'));
 		selecting = true;
 
+		trace(curCat);
+
 		for (item in catGrp.members)
 		{
 			if (checkSelect(item))
@@ -187,11 +190,9 @@ class TomFreeplayState extends MusicBeatState
 			}
 		}
 
-		FreeplayState.weekToLoad = WeekData.weeksLoaded.get(curCat);
-
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
-			FlxG.switchState(() -> new FreeplayState());
+			FlxG.switchState(() -> new FreeplayState(curCat));
 		});
 	}
 

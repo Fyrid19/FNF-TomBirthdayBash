@@ -1,9 +1,6 @@
 package;
 
 import flixel.graphics.FlxGraphic;
-#if desktop
-import Discord.DiscordClient;
-#end
 import Section.SwagSection;
 import Song.SwagSong;
 import WiggleEffect.WiggleEffectType;
@@ -84,16 +81,16 @@ class PlayState extends MusicBeatState
 	public static var cameramovingoffsetbf = 20; // idk why i made literally same variable
 
 	public static var ratingStuff:Array<Dynamic> = [
-		['F', 0.2], //From 0% to 19%
-		['E', 0.4], //From 20% to 39%
-		['D', 0.5], //From 40% to 49%
-		['C', 0.6], //From 50% to 59%
-		['B', 0.69], //From 60% to 68%
-		['A', 0.7], //69%
-		['AA', 0.8], //From 70% to 79%
-		['AAA', 0.9], //From 80% to 89%
-		['AAAA', 1], //From 90% to 99%
-		['AAAAA', 1] //The value on this one isn't used actually, since Perfect is always "1"
+		['failure.', 0.2], //From 0% to 19%
+		['trash tier normie', 0.4], //From 20% to 39%
+		['meh', 0.5], //From 40% to 49%
+		['Okay', 0.6], //From 50% to 59%
+		['Alright', 0.69], //From 60% to 68%
+		['heh', 0.7], //69%
+		['Nice', 0.8], //From 70% to 79%
+		['Feelin\' It', 0.9], //From 80% to 89%
+		['Almost Tomtastic..', 1], //From 90% to 99%
+		['Tomtastic!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 	public static var animatedShaders:Map<String, DynamicShaderHandler> = new Map<String, DynamicShaderHandler>();
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
@@ -335,21 +332,24 @@ class PlayState extends MusicBeatState
 
 	var precacheList:Map<String, String> = new Map<String, String>();
 
+	// goblin
+	var goblin:FlxSprite;
+
 	override public function create()
 	{
 		Paths.clearStoredMemory();
 
 		ratingStuff = [
-			['F', 0.2], //From 0% to 19%
-			['E', 0.4], //From 20% to 39%
-			['D', 0.5], //From 40% to 49%
-			['C', 0.6], //From 50% to 59%
-			['B', 0.69], //From 60% to 68%
-			['A', 0.7], //69%
-			['AA', 0.8], //From 70% to 79%
-			['AAA', 0.9], //From 80% to 89%
-			['AAAA', 1], //From 90% to 99%
-			['AAAAA', 1] //The value on this one isn't used actually, since Perfect is always "1"
+			['failure.', 0.2], //From 0% to 19%
+			['trash tier normie', 0.4], //From 20% to 39%
+			['meh', 0.5], //From 40% to 49%
+			['Okay', 0.6], //From 50% to 59%
+			['Alright', 0.69], //From 60% to 68%
+			['heh', 0.7], //69%
+			['Nice', 0.8], //From 70% to 79%
+			['Feelin\' It', 0.9], //From 80% to 89%
+			['Almost Tomtastic..', 1], //From 90% to 99%
+			['Tomtastic!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 		];
 
 		// for lua
@@ -450,6 +450,8 @@ class PlayState extends MusicBeatState
 		// String for when the game is paused
 		detailsPausedText = "Paused - " + detailsText;
 		#end
+
+		TomStoryState.seenNote = false;
 
 		GameOverSubstate.resetVariables();
 		var songName:String = Paths.formatToSongPath(SONG.song);
@@ -561,6 +563,18 @@ class PlayState extends MusicBeatState
 		{
 			case 'stress':
 				GameOverSubstate.characterName = 'bf-holding-gf-dead';
+		}
+
+		if (songName == 'half-off') {
+			goblin = new FlxSprite().loadGraphic(Paths.image('goblin'));
+			goblin.setGraphicSize(Std.int(goblin.width * 0.7));
+			goblin.x = -goblin.width - 1000;
+			goblin.y = 200;
+			add(goblin);
+
+			FlxG.mouse.visible = true;
+
+			// LAUNCHTHEGOBLIN();
 		}
 		
 		// Paths.cacheGraphic('pause/beuty');
@@ -1186,7 +1200,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		updateDiscordRPC(detailsText);
 		#end
 
 		if(!ClientPrefs.controllerMode)
@@ -2288,7 +2302,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		updateDiscordRPC(detailsText, null, true, songLength);
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
@@ -2721,13 +2735,9 @@ class PlayState extends MusicBeatState
 
 			#if desktop
 			if (startTimer != null && startTimer.finished)
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
-			}
+				updateDiscordRPC(detailsText, null, true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			else
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
-			}
+				updateDiscordRPC(detailsText);
 			#end
 		}
 
@@ -2740,13 +2750,9 @@ class PlayState extends MusicBeatState
 		if (health > 0 && !paused)
 		{
 			if (Conductor.songPosition > 0.0)
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
-			}
+				updateDiscordRPC(detailsText, null, true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
 			else
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
-			}
+				updateDiscordRPC(detailsText);
 		}
 		#end
 
@@ -2757,9 +2763,7 @@ class PlayState extends MusicBeatState
 	{
 		#if desktop
 		if (health > 0 && !paused)
-		{
-			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
-		}
+			updateDiscordRPC(detailsPausedText);
 		#end
 
 		super.onFocusLost();
@@ -2780,11 +2784,22 @@ class PlayState extends MusicBeatState
 		vocals.play();
 	}
 
+	function LAUNCHTHEGOBLIN() {
+		FlxTween.tween(goblin, {x: FlxG.width + goblin.width + 500}, 1.5, {onComplete: function(twn:FlxTween)
+		{
+			goblin.visible = false;
+			goblinLaunched = true;
+		}});
+	}
+
 	public var paused:Bool = false;
 	public var canReset:Bool = true;
 	var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
+
+	var goblinLaunched:Bool = false;
+	var randomGoblin:Float = FlxG.random.int(10, 25);
 
 	override public function update(elapsed:Float)
 	{
@@ -2794,6 +2809,38 @@ class PlayState extends MusicBeatState
 		}*/
 		callOnLuas('onUpdate', [elapsed]);
 		callOnHScripts('update', [elapsed]);
+
+		var songName:String = Paths.formatToSongPath(SONG.song);
+
+		if (songName == 'half-off') {
+			trace(Conductor.songPosition / 1000);
+			if (!goblinLaunched) {
+				if (Std.int(Conductor.songPosition / 1000) == randomGoblin) {
+					LAUNCHTHEGOBLIN();
+					trace(randomGoblin);
+				}
+			}
+
+			if (FlxG.mouse.overlaps(goblin) && goblin.visible) {
+				if (FlxG.mouse.justPressed) {
+					var poop = Highscore.formatSong('Goblin Groove', 0);
+					PlayState.SONG = Song.loadFromJson(poop, 'Goblin Groove');
+					PlayState.storyDifficulty = 0;
+					PlayState.instance.persistentUpdate = false;
+					LoadingState.loadAndSwitchState(() -> new PlayState());
+
+					FlxG.save.data.goblinGrooveUnlocked = true;
+
+					FlxG.sound.music.pause();
+					FlxG.sound.music.volume = 0;
+					if(PlayState.instance.vocals != null)
+					{
+						PlayState.instance.vocals.pause();
+						PlayState.instance.vocals.volume = 0;
+					}
+				}
+			}
+		}
 
 		switch (curStage)
 		{
@@ -2936,6 +2983,10 @@ class PlayState extends MusicBeatState
 			} else {
 				boyfriendIdleTime = 0;
 			}
+		}
+
+		if (Conductor.songPosition > vocals.length) {
+			vocals.stop();
 		}
 
 		super.update(elapsed);
@@ -3312,7 +3363,7 @@ class PlayState extends MusicBeatState
 		//}
 
 		#if desktop
-		DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		updateDiscordRPC(detailsPausedText);
 		#end
 	}
 
@@ -3346,7 +3397,7 @@ class PlayState extends MusicBeatState
 		chartingMode = true;
 
 		#if desktop
-		DiscordClient.changePresence("Chart Editor", null, null, true);
+		DiscordRPC.changePresence({details: "Chart Editor", hasStartTimestamp: true});
 		#end
 	}
 
@@ -3378,7 +3429,7 @@ class PlayState extends MusicBeatState
 
 				#if desktop
 				// Game Over doesn't get his own variable because it's only used here
-				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				updateDiscordRPC("Game Over - " + detailsText);
 				#end
 				isDead = true;
 				return true;
@@ -3944,6 +3995,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
+
+		if (FlxG.mouse.visible) FlxG.mouse.visible = false;
 
 		var ret:Dynamic = callOnLuas('onEndSong', [], false);
 		if(ret != FunkinLua.Function_Stop && !transitioning) {
@@ -5254,6 +5307,20 @@ class PlayState extends MusicBeatState
 			luaArray[i].set(variable, arg);
 		}
 		#end
+	}
+
+	public function updateDiscordRPC(details:String, ?state:String = null, ?hasTimestamp:Bool, ?endTimestamp:Float = 0) {
+		var rpcImage:String = SONG.rpcImage;
+		trace(rpcImage);
+
+		DiscordRPC.changePresence({
+			details: details,
+			state: state != null ? state : SONG.song + " (" + storyDifficultyText + ")",
+			smallImageKey: iconP2.getCharacter(),
+			hasStartTimestamp: hasTimestamp,
+			endTimestamp: endTimestamp,
+			largeImageKey: rpcImage
+		});
 	}
 
 	function StrumPlayAnim(isDad:Bool, id:Int, time:Float) {

@@ -1,8 +1,5 @@
 package editors;
 
-#if desktop
-import Discord.DiscordClient;
-#end
 import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -245,7 +242,8 @@ class ChartingState extends MusicBeatState
 				validScore: false,
 				disableAntiMash: false,
 				disableDebugButtons: false,
-				swapStrumLines: false
+				swapStrumLines: false,
+				rpcImage: ''
 			};
 			addSection();
 			PlayState.SONG = _song;
@@ -257,7 +255,7 @@ class ChartingState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("In Chart Editor", StringTools.replace(_song.song, '-', ' '));
+		DiscordRPC.changePresence({details: "In Chart Editor", state: StringTools.replace(_song.song, '-', ' ')});
 		#end
 
 		vortex = FlxG.save.data.chart_vortex;
@@ -431,6 +429,7 @@ class ChartingState extends MusicBeatState
 	var UI_songTitle:FlxUIInputText;
 	var noteSkinInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
+	var rpcImageInputText:FlxUIInputText;
 	var stageDropDown:FlxUIDropDownMenuCustom;
 	function addSongUI():Void
 	{
@@ -488,9 +487,15 @@ class ChartingState extends MusicBeatState
 		});
 
 		var saveEvents:FlxButton = new FlxButton(110, reloadSongJson.y, 'Save Events', function ()
-			{
-				saveEvents();
-			});
+		{
+			saveEvents();
+		});
+
+		var saveAsButton:FlxButton = new FlxButton(110, loadAutosaveBtn.y, "Save As", function()
+		{
+			saveLevelAs();
+		});
+
 		var check_antiMash = new FlxUICheckBox(reloadSong.x + 90, reloadSong.y, null, null, "Disable Antimash", 100);
 		check_antiMash.checked = _song.disableAntiMash;
 		check_antiMash.callback = function()
@@ -685,6 +690,9 @@ class ChartingState extends MusicBeatState
 			_song.arrowSkin = noteSkinInputText.text;
 			updateGrid();
 		});
+		
+		rpcImageInputText = new FlxUIInputText(stageDropDown.x, noteSkinInputText.y, 150, _song.rpcImage, 8);
+		blockPressWhileTypingOn.push(rpcImageInputText);
 
 		var tab_group_song = new FlxUI(null, UI_box);
 		tab_group_song.name = "Song";
@@ -694,6 +702,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(clear_events);
 		tab_group_song.add(clear_notes);
 		tab_group_song.add(saveButton);
+		tab_group_song.add(saveAsButton);
 		tab_group_song.add(saveEvents);
 		tab_group_song.add(reloadSong);
 		tab_group_song.add(reloadSongJson);
@@ -711,9 +720,10 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(noteSkinInputText);
 		tab_group_song.add(noteSplashesInputText);
 		tab_group_song.add(songinstVolumeOBJ);
+		tab_group_song.add(rpcImageInputText);
 		tab_group_song.add(new FlxText(songinstVolumeOBJ.x, songinstVolumeOBJ.y - 25, 0, 'Ingame Instrumental \nVolume:'));
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
-		tab_group_song.add(new FlxText(stepperBPM.x + 100, stepperBPM.y - 15, 0, 'Song Offset:'));
+		// tab_group_song.add(new FlxText(stepperBPM.x + 100, stepperBPM.y - 15, 0, 'Song Offset:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
 		tab_group_song.add(new FlxText(player2DropDown.x, player2DropDown.y - 15, 0, 'Opponent:'));
 		tab_group_song.add(new FlxText(gfVersionDropDown.x, gfVersionDropDown.y - 15, 0, 'Girlfriend:'));
@@ -722,6 +732,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(healthdrainOBJ.x, healthdrainOBJ.y - 25, 0, 'Health Drain on \nOpponent Notehit'));
 		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
 		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
+		tab_group_song.add(new FlxText(rpcImageInputText.x, rpcImageInputText.y - 15, 0, 'Discord RPC Image:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(gfVersionDropDown);
 		tab_group_song.add(player1DropDown);
@@ -1582,6 +1593,9 @@ class ChartingState extends MusicBeatState
 		else if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
 			if(sender == noteSplashesInputText) {
 				_song.splashSkin = noteSplashesInputText.text;
+			}
+			if(sender == rpcImageInputText) {
+				_song.rpcImage = rpcImageInputText.text;
 			}
 			else if(curSelectedNote != null)
 			{
@@ -3155,6 +3169,25 @@ class ChartingState extends MusicBeatState
 			// _file.addEventListener(Event.CANCEL, onSaveCancel);
 			// _file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
 			// _file.save(data.trim(), Paths.formatToSongPath(_song.song) + ".json");
+		}
+	}
+
+	private function saveLevelAs()
+	{
+		if(_song.events != null && _song.events.length > 1) _song.events.sort(sortByTime);
+		var json = {
+			"song": _song
+		};
+
+		var data:String = Json.stringify(json, "\t");
+
+		if ((data != null) && (data.length > 0))
+		{
+			_file = new FileReference();
+			_file.addEventListener(Event.COMPLETE, onSaveComplete);
+			_file.addEventListener(Event.CANCEL, onSaveCancel);
+			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
+			_file.save(data.trim(), Paths.formatToSongPath(_song.song) + ".json");
 		}
 	}
 

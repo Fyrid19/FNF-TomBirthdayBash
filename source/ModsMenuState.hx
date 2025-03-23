@@ -1,8 +1,5 @@
 package;
 
-#if desktop
-import Discord.DiscordClient;
-#end
 import flash.text.TextField;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -70,7 +67,7 @@ class ModsMenuState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Mods Menu", null);
+		DiscordRPC.changePresence({details: "Mods Menu"});
 		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));

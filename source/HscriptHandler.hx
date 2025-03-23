@@ -2,8 +2,7 @@ package;
 
 import hscript.Interp;
 
-import PlayState;  
-import Discord;
+import PlayState;
 import Character;
 import Boyfriend;
 import Song;

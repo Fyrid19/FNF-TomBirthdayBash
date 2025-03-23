@@ -1,7 +1,6 @@
 package;
 
 #if desktop
-import Discord.DiscordClient;
 import sys.thread.Thread;
 #end
 import flixel.FlxSprite;
@@ -203,11 +202,11 @@ class TitleState extends MusicBeatState
 		FlxG.switchState(() -> new ChartingState());
 		#else
 		#if desktop
-		if (!DiscordClient.isInitialized)
+		if (!DiscordRPC.initialized)
 		{
-			DiscordClient.initialize();
+			DiscordRPC.init();
 			Application.current.onExit.add (function (exitCode) {
-				DiscordClient.shutdown();
+				DiscordRPC.shutdownClient();
 			});
 		}
 		#end

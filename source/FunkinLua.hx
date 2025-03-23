@@ -44,10 +44,6 @@ import hscript.Parser;
 import hscript.Interp;
 #end
 
-#if desktop
-import Discord;
-#end
-
 #if VIDEOS_ALLOWED
 import hxvlc.flixel.FlxVideoSprite;
 #end
@@ -2217,7 +2213,13 @@ class FunkinLua {
 
 		Lua_helper.add_callback(lua, "changePresence", function(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float) {
 			#if desktop
-			DiscordClient.changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
+			DiscordRPC.changePresence({
+				details: details, 
+				state: state, 
+				smallImageKey: smallImageKey, 
+				hasStartTimestamp: hasStartTimestamp, 
+				endTimestamp: endTimestamp
+			});
 			#end
 		});
 
@@ -2712,7 +2714,7 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 			PlayState.instance.clearShaderFromCamera(camera);
 		});
-		Discord.DiscordClient.addLuaCallbacks(lua);
+		DiscordRPC.addLuaCallbacks(lua);
 
 		// Other stuff
 		Lua_helper.add_callback(lua, "stringStartsWith", function(str:String, start:String) {

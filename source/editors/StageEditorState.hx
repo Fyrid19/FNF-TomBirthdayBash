@@ -1,8 +1,5 @@
 package editors;
 
-#if desktop
-import Discord.DiscordClient;
-#end
 import animateatlas.AtlasFrameMaker;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -210,7 +207,7 @@ class StageEditorState extends MusicBeatState
 
         #if desktop
         // Updating Discord Rich Presence
-        DiscordClient.changePresence("In Stage Editor", "Making a stage...");
+        DiscordRPC.changePresence({details: "In Stage Editor", state: "Making a stage..."});
         #end
 
         super.create();

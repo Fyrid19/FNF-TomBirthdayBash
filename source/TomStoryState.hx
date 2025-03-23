@@ -11,7 +11,6 @@ import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.plugin.FlxScrollingText;
-import Discord.DiscordClient;
 import WeekData;
 
 class TomStoryState extends MusicBeatState {
@@ -56,6 +55,8 @@ class TomStoryState extends MusicBeatState {
 
     public static var curWeekName:String = '';
 
+    public static var seenNote:Bool;
+
     override function create() {
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
@@ -67,7 +68,7 @@ class TomStoryState extends MusicBeatState {
         
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Story Menu", null);
+		DiscordRPC.changePresence({details: "Story Menu"});
 		#end
 
         background = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -169,9 +170,10 @@ class TomStoryState extends MusicBeatState {
 
         super.create();
 
-        if (FlxG.save.data.playedBestFriend) {
+        if (FlxG.save.data.playedBestFriend && !seenNote) {
             openSubState(new NoteForTom());
             readingNote = true;
+            seenNote = true;
         }
     }
 

@@ -1,8 +1,5 @@
 package;
 
-#if desktop
-import Discord.DiscordClient;
-#end
 import flash.text.TextField;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -53,7 +50,7 @@ class GameExitState extends MusicBeatState
 
 	override function create() {
 		#if desktop
-		DiscordClient.changePresence("Game Closing Menu", null);
+		DiscordRPC.changePresence("Game Closing Menu", null);
 		#end
 
         var bg:FlxBackdrop = new FlxBackdrop(Paths.image('loading'), 0.2, 0, true, true);

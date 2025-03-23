@@ -1,8 +1,5 @@
 package;
 
-#if desktop
-import Discord.DiscordClient;
-#end
 import editors.ChartingState;
 import flash.text.TextField;
 import flixel.FlxSprite;
@@ -50,6 +47,11 @@ class FreeplayState extends MusicBeatState
 
 	public static var weekToLoad:WeekData;
 
+	public function new(?week:String) {
+		if (week != null || week.length > 1) weekToLoad = WeekData.weeksLoaded.get(week);
+		super();
+	}
+
 	override function create()
 	{
 		//Paths.clearStoredMemory();
@@ -58,10 +60,12 @@ class FreeplayState extends MusicBeatState
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
+		
+		FlxG.mouse.visible = false;
 
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("Freeplay Menu", null);
+		DiscordRPC.changePresence({details: "Freeplay Menu"});
 		#end
 
 		var leWeek:WeekData = weekToLoad;
@@ -85,12 +89,13 @@ class FreeplayState extends MusicBeatState
 			addSong(song[0], 0, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 		}
 
-		if (FlxG.save.data.scoutlock && leWeek.storyName == 'extra') {
-			addSong("Autotune", 2, "scot", FlxColor.fromRGB(75, 0, 0));
-		}
-
-		if (FlxG.save.data.cheaterUnlocked && leWeek.storyName == 'extra') {
-			addSong("Cheater", 3, "engie", FlxColor.fromRGB(0, 0, 0));
+		if (leWeek.storyName == 'extra') {
+			if (FlxG.save.data.scoutlock)
+				addSong("Autotune", 2, "scot", FlxColor.fromRGB(75, 0, 0));
+			if (FlxG.save.data.cheaterUnlocked)
+				addSong("Cheater", 3, "engie", FlxColor.fromRGB(0, 0, 0));
+			if (FlxG.save.data.goblinGrooveUnlocked)
+				addSong("Goblin Groove", 4, "goblin", FlxColor.fromRGB(0, 100, 0));
 		}
 
 		WeekData.loadTheFirstEnabledMod();

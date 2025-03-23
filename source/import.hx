@@ -8,4 +8,8 @@ import flixel.sound.FlxSound;
 #else
 import flixel.system.FlxSound;
 #end
+
+#if DISCORD_RPC
+import DiscordRPC;
+#end
 #end

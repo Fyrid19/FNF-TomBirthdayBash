@@ -27,6 +27,8 @@ typedef SwagSong =
 	var stage:String;
 	var healthdrainKill:Bool;
 
+	var rpcImage:String;
+
 	var arrowSkin:String;
 	var splashSkin:String;
 	var validScore:Bool;
@@ -59,6 +61,7 @@ class Song
 	public var disableAntiMash:Bool = false;
 	public var disableDebugButtons:Bool = false;
 	public var swapStrumLines:Bool = false;
+	public var rpcImage:String = '';
 
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
