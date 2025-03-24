@@ -566,8 +566,11 @@ class PlayState extends MusicBeatState
 		}
 
 		if (songName == 'half-off') {
-			goblin = new FlxSprite().loadGraphic(Paths.image('goblin'));
+			goblin = new FlxSprite().loadGraphic(Paths.image('characters/goblin'), true);
 			goblin.setGraphicSize(Std.int(goblin.width * 0.7));
+			goblin.frames = Paths.getSparrowAtlas('characters/goblin');
+			goblin.animation.addByPrefix('run', 'run', 24, true);
+			goblin.animation.play('run');
 			goblin.x = -goblin.width - 1000;
 			goblin.y = 200;
 			add(goblin);
@@ -2783,9 +2786,12 @@ class PlayState extends MusicBeatState
 		}
 		vocals.play();
 	}
+	
+	var goblinLaunched:Bool = false;
+	var randomGoblin:Float = FlxG.random.int(10, 25);
 
 	function LAUNCHTHEGOBLIN() {
-		FlxTween.tween(goblin, {x: FlxG.width + goblin.width + 500}, 1.5, {onComplete: function(twn:FlxTween)
+		FlxTween.tween(goblin, {x: FlxG.width + goblin.width + 500}, 10, {onComplete: function(twn:FlxTween)
 		{
 			goblin.visible = false;
 			goblinLaunched = true;
@@ -2797,9 +2803,6 @@ class PlayState extends MusicBeatState
 	var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
-
-	var goblinLaunched:Bool = false;
-	var randomGoblin:Float = FlxG.random.int(10, 25);
 
 	override public function update(elapsed:Float)
 	{
