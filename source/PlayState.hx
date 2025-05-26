@@ -568,10 +568,10 @@ class PlayState extends MusicBeatState
 		}
 
 		if (songName == 'half-off') {
-			goblin = new FlxSprite().loadGraphic(Paths.image('running_goblin'), true);
+			goblin = new FlxSprite().loadGraphic(Paths.image('running_goblin'));
 			goblin.setGraphicSize(Std.int(goblin.width * 0.7));
 			goblin.x = -goblin.width - 1000;
-			goblin.y = 200;
+			goblin.y = 50;
 			add(goblin);
 
 			FlxG.mouse.visible = true;
