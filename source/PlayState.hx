@@ -571,7 +571,7 @@ class PlayState extends MusicBeatState
 			goblin = new FlxSprite().loadGraphic(Paths.image('running_goblin'));
 			goblin.setGraphicSize(Std.int(goblin.width * 0.7));
 			goblin.x = -goblin.width - 1000;
-			goblin.y = 50;
+			goblin.y = 350;
 			add(goblin);
 
 			FlxG.mouse.visible = true;
@@ -3072,8 +3072,14 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-		ratingTxt.y = playerStrums.members[0].y - playerStrums.members[0].height / 2 + 36;
-		comboTxt.y = ratingTxt.y + ratingTxt.height - 12;
+		var playerStrumNote:StrumNote = playerStrums.members[0];
+		if (!ClientPrefs.middleScroll) {
+			ratingTxt.y = ClientPrefs.downScroll ? playerStrumNote.y - playerStrumNote.height / 2 + 36 : playerStrumNote.y + playerStrumNote.height / 2 + 24;
+			comboTxt.y = ClientPrefs.downScroll ? ratingTxt.y + ratingTxt.height - 12 : ratingTxt.y - ratingTxt.height + 24;
+		} else {
+			ratingTxt.y = ClientPrefs.downScroll ? playerStrumNote.y - playerStrumNote.height / 2 - 12 : playerStrumNote.y + playerStrumNote.height / 2 + 72;
+			comboTxt.y = ClientPrefs.downScroll ? ratingTxt.y - ratingTxt.height + 24 : ratingTxt.y + ratingTxt.height - 12;
+		}
 
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
 		iconP1.scale.set(mult, mult);
