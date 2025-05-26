@@ -302,11 +302,7 @@ class TomStoryState extends MusicBeatState {
             songArray.push(weekToPlay.songs[i][0]);
         }
 
-        var randomString:String = '';
-        if (FlxG.random.bool(5))
-            randomString = 'Lets-a go!';
-        else
-            randomString = 'Lets go!';
+		var randomString:String = FlxG.random.bool(1) ? 'Lets-a go!' : 'Lets go!';
 
         weekTracksText.text = randomString;
         var scrollText:FlxText = new FlxText(0, 0, 0, randomString.toUpperCase(), 48);

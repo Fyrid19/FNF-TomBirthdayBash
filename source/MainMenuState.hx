@@ -27,7 +27,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var osEngineVersion:String = '1.5.1'; //This is also used for Discord RPC
+	public static var osEngineVersion:String = '2.Aver'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -192,13 +192,13 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(FlxG.width * 0.76 + 4, FlxG.height - 44, 0, "Tom Engine" + " - Modded OS Engine", 12);
+		var versionShit:FlxText = new FlxText(-4, FlxG.height - 44, FlxG.width, "TomOS" + " - Modded OS Engine", 12);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat(Paths.font("tomgles.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(Paths.font("tomgles.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(FlxG.width * 0.8 + 4, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
+		var versionShit:FlxText = new FlxText(-4, FlxG.height - 24, FlxG.width, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
 		versionShit.scrollFactor.set();
-		versionShit.setFormat(Paths.font("tomgles.ttf"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.setFormat(Paths.font("tomgles.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 
 		// NG.core.calls.event.logEvent('swag').send();
@@ -304,8 +304,8 @@ class MainMenuState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					//if(ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
-					FlxTween.tween(magenta, {alpha: 1}, 1, {ease: FlxEase.quadOut});
+					if(ClientPrefs.flashing) FlxTween.flicker(magenta, 1.1, 0.15, {endVisibility: false});
+					// FlxTween.tween(magenta, {alpha: 1}, 1, {ease: FlxEase.quadOut});
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{

@@ -28,6 +28,8 @@ typedef SwagSong =
 	var healthdrainKill:Bool;
 
 	var rpcImage:String;
+	
+	var disableZoomOnCountdown:Bool;
 
 	var arrowSkin:String;
 	var splashSkin:String;
@@ -62,6 +64,7 @@ class Song
 	public var disableDebugButtons:Bool = false;
 	public var swapStrumLines:Bool = false;
 	public var rpcImage:String = '';
+	public var disableZoomOnCountdown:Bool = false;
 
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';

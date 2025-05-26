@@ -94,11 +94,9 @@ class CharacterEditorState extends MusicBeatState
 		charLayer = new FlxTypedGroup<Character>();
 		add(charLayer);
 
-		var pointer:FlxGraphic = FlxGraphic.fromClass(GraphicCursorCross);
-		cameraFollowPointer = new FlxSprite().loadGraphic(pointer);
+		cameraFollowPointer = new FlxSprite().loadGraphic(Paths.image('cursorCross'));
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
-		cameraFollowPointer.color = FlxColor.WHITE;
 		add(cameraFollowPointer);
 
 		changeBGbutton = new FlxButton(FlxG.width - 360, 25, "", function()

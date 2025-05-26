@@ -243,7 +243,8 @@ class ChartingState extends MusicBeatState
 				disableAntiMash: false,
 				disableDebugButtons: false,
 				swapStrumLines: false,
-				rpcImage: ''
+				rpcImage: '',
+				disableZoomOnCountdown: false
 			};
 			addSection();
 			PlayState.SONG = _song;
@@ -526,6 +527,12 @@ class ChartingState extends MusicBeatState
 		{
 			_song.bfTrails = check_bfTrails.checked;
 		};
+		var check_disableCountdownZoom = new FlxUICheckBox(check_bfTrails.x, check_bfTrails.y+30, null, null, "Disable Countdown Zoom", 100);
+		check_disableCountdownZoom.checked = _song.disableZoomOnCountdown;
+		check_disableCountdownZoom.callback = function()
+		{
+			_song.disableZoomOnCountdown = check_disableCountdownZoom.checked;
+		};
 		var check_cameraMove = new FlxUICheckBox(80, loadEventJson.y, null, null, "Move Camera on Note Hits", 100);
 		check_cameraMove.checked = _song.cameraMoveOnNotes;
 		check_cameraMove.callback = function()
@@ -709,6 +716,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(loadAutosaveBtn);
 		tab_group_song.add(check_Trails);
 		tab_group_song.add(check_bfTrails);
+		tab_group_song.add(check_disableCountdownZoom);
 		tab_group_song.add(check_antiMash);
 		tab_group_song.add(check_swapNote);
 		tab_group_song.add(check_disableDebug);

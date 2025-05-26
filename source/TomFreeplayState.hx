@@ -98,6 +98,8 @@ class TomFreeplayState extends MusicBeatState
 
 	var canSelect:Bool = true;
 
+	var realSel:Int;
+
 	override function update(elapsed:Float)
 	{
 		if (!selecting)
@@ -119,10 +121,15 @@ class TomFreeplayState extends MusicBeatState
 				changeSelection(1);
 
 			if (controls.UI_UP_P)
-				changeSelection(-1, true);
+				changeSelectionAlt(-1);
 			if (controls.UI_DOWN_P)
-				changeSelection(1, true);
+				changeSelectionAlt(1);
 		}
+
+		if (curSel > cats[curSelAlt].length - 1)
+			realSel = 0;
+		else
+			realSel = curSel;
 
 		for (item in catGrp.members)
 		{
@@ -135,38 +142,32 @@ class TomFreeplayState extends MusicBeatState
 				item.color = 0x888888;
 			}
 		}
-
-		curCat = cats[curSelAlt][curSel];
+		
+		curCat = cats[curSelAlt][realSel];
 
 		super.update(elapsed);
 	}
 
-    var backupCurSel:Int = -1;
-	public function changeSelection(index:Int = 0, ?alt:Bool = false, ?set:Bool = false)
-	{
+	public function changeSelection(index:Int = 0) {
 		FlxG.sound.play(Paths.sound('scrollMenu'));
         
-        if (!alt) {
-            if (!set)
-                curSel += index;
-            else
-                curSel = index;
-        } else {
-            if (!set)
-                curSelAlt += index;
-            else
-                curSelAlt = index;
-    
-            if (curSelAlt < 0)
-                curSelAlt = cats.length - 1;
-            if (curSelAlt >= cats.length)
-                curSelAlt = 0;
-        }
-        
-        if (curSel < 0)
-            curSel = cats[curSelAlt].length - 1;
-        if (curSel >= cats[curSelAlt].length)
-            curSel = 0;
+		curSel += index;
+	
+		if (curSel < 0)
+			curSel = cats[curSelAlt].length - 1;
+		if (curSel >= cats[curSelAlt].length)
+			curSel = 0;
+	}
+
+	public function changeSelectionAlt(index:Int = 0) {
+		FlxG.sound.play(Paths.sound('scrollMenu'));
+
+		curSelAlt += index;
+	
+		if (curSelAlt < 0)
+			curSelAlt = cats.length - 1;
+		if (curSelAlt >= cats.length)
+			curSelAlt = 0;
 	}
 
 	function selectCat()
@@ -197,7 +198,7 @@ class TomFreeplayState extends MusicBeatState
 	}
 
 	function checkSelect(item:CatItem):Bool
-		return item.itemID == curSel && item.itemID2 == curSelAlt;
+		return item.itemID == realSel && item.itemID2 == curSelAlt;
 }
 
 class CatItem extends FlxSprite

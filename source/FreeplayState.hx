@@ -89,13 +89,22 @@ class FreeplayState extends MusicBeatState
 			addSong(song[0], 0, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 		}
 
+		// checks the score of all the aver update songs
+		if (Highscore.getScore("Tomtastic", 0) > 0 && Highscore.getScore("Goblin Groove", 0) > 0
+		&& Highscore.getScore("Noise Update", 0) > 0 && Highscore.getScore("Super Send-Off", 0) > 0) {
+			FlxG.save.data.dynamiteUnlocked = true;
+		}
+		
+
 		if (leWeek.storyName == 'extra') {
 			if (FlxG.save.data.scoutlock)
 				addSong("Autotune", 2, "scot", FlxColor.fromRGB(75, 0, 0));
 			if (FlxG.save.data.cheaterUnlocked)
-				addSong("Cheater", 3, "engie", FlxColor.fromRGB(0, 0, 0));
+				addSong("Cheater", 2, "engie", FlxColor.fromRGB(0, 0, 0));
 			if (FlxG.save.data.goblinGrooveUnlocked)
-				addSong("Goblin Groove", 4, "goblin", FlxColor.fromRGB(0, 100, 0));
+				addSong("Goblin Groove", 2, "goblin", FlxColor.fromRGB(0, 100, 0));
+			if (FlxG.save.data.dynamiteUnlocked)
+				insertSong("Dynamite", 2, "dan", FlxColor.fromRGB(255, 0, 0), 9);
 		}
 
 		WeekData.loadTheFirstEnabledMod();
@@ -225,6 +234,11 @@ class FreeplayState extends MusicBeatState
 	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
 	{
 		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+	}
+
+	public function insertSong(songName:String, weekNum:Int, songCharacter:String, color:Int, insert:Int)
+	{
+		songs.insert(insert, new SongMetadata(songName, weekNum, songCharacter, color));
 	}
 
 	function weekIsLocked(name:String):Bool {
