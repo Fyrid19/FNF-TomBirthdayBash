@@ -3072,13 +3072,15 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-		var playerStrumNote:StrumNote = playerStrums.members[0];
-		if (!ClientPrefs.middleScroll) {
-			ratingTxt.y = ClientPrefs.downScroll ? playerStrumNote.y - playerStrumNote.height / 2 + 36 : playerStrumNote.y + playerStrumNote.height / 2 + 24;
-			comboTxt.y = ClientPrefs.downScroll ? ratingTxt.y + ratingTxt.height - 12 : ratingTxt.y - ratingTxt.height + 24;
-		} else {
-			ratingTxt.y = ClientPrefs.downScroll ? playerStrumNote.y - playerStrumNote.height / 2 - 12 : playerStrumNote.y + playerStrumNote.height / 2 + 72;
-			comboTxt.y = ClientPrefs.downScroll ? ratingTxt.y - ratingTxt.height + 24 : ratingTxt.y + ratingTxt.height - 12;
+		if (!inCutscene) {
+			var playerStrumNote:StrumNote = playerStrums.members[0];
+			if (!ClientPrefs.middleScroll) {
+				ratingTxt.y = ClientPrefs.downScroll ? playerStrumNote.y - playerStrumNote.height / 2 + 36 : playerStrumNote.y + playerStrumNote.height / 2 + 24;
+				comboTxt.y = ClientPrefs.downScroll ? ratingTxt.y + ratingTxt.height - 12 : ratingTxt.y - ratingTxt.height + 24;
+			} else {
+				ratingTxt.y = ClientPrefs.downScroll ? playerStrumNote.y - playerStrumNote.height / 2 - 12 : playerStrumNote.y + playerStrumNote.height / 2 + 72;
+				comboTxt.y = ClientPrefs.downScroll ? ratingTxt.y - ratingTxt.height + 24 : ratingTxt.y + ratingTxt.height - 12;
+			}
 		}
 
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
